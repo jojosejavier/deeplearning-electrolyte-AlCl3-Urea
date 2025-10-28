@@ -1,0 +1,21 @@
+&CONTROL
+    calculation = 'md',
+    restart_mode = 'from_scratch',
+    prefix = 'ns',
+    nstep = 6000,
+    pseudo_dir = '/home/pseudo',
+    outdir = '/home/output',
+    dt = 20
+/
+&SYSTEM
+   ntyp = 6, nat = 52, ibrav = 0,
+   occupations = 'smearing', smearing = 'mp', degauss = 0.02
+/
+&ELECTRONS
+   mixing_mode = 'local-TF', mixing_beta = 0.7
+/
+&IONS
+   ion_temperature = 'andersen', tempw = 300
+/
+&CELL
+/

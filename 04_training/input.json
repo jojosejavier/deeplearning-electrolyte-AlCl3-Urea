@@ -1,0 +1,18 @@
+{
+  "model": {
+    "type_map": ["Al", "Cl", "C", "H", "N", "O"],
+    "descriptor": {
+      "type": "se_e2_a",
+      "rcut": 6.0,
+      "rcut_smth": 0.5,
+      "sel": [10, 10, 10, 10, 10, 10],
+      "neuron": [20, 40, 80]
+    },
+    "fitting_net": { "neuron": [240, 240, 240] }
+  },
+  "training": {
+    "numb_steps": 1000000,
+    "disp_file": "lcurve.out",
+    "save_freq": 10000
+  }
+}
