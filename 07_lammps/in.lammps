@@ -1,0 +1,52 @@
+# ===== Simulación MD con DeepMD =====
+units           metal
+atom_style      atomic
+boundary        p p p
+
+# Datos iniciales
+read_data       data_reduced.lammps
+
+# Potencial DeepMD
+pair_style   deepmd graph-compress.pb
+pair_coeff   * * Al Cl C H N O
+
+# Vecindades
+neighbor        3.0 bin
+neigh_modify    delay 0 every 1 check yes
+
+# Minimización robusta
+min_style       fire
+min_modify      dmax 0.1
+minimize        1.0e-6 1.0e-8 5000 50000
+
+# ==== Pre-quench corto para estabilizar ====
+reset_timestep  0
+timestep        0.0005             # 0.5 fs
+fix             pre all nve/limit 0.1
+thermo_style    custom step temp pe ke etotal press
+thermo          500
+run             20000              # ~10 ps
+unfix           pre
+
+# ==== Dinámica de producción ====
+# Termostat más suave (elige NVT al inicio)
+fix             1 all nvt temp 300.0 300.0 1.0   # damping = 1 ps
+
+# Si prefieres Langevin en lugar de NVT, comenta la línea anterior
+# y usa estas dos:
+# fix          2 all langevin 300.0 300.0 1.0 904297
+# fix          1 all nve
+
+# Paso de integración
+timestep        0.001              # 1 fs
+
+# Dumps
+dump            1 all custom 1000 traj-1.lammpstrj id type x y z fx fy fz
+dump_modify     1 sort id
+
+thermo          1000
+reset_timestep  0
+
+# ====== Producción: 1 ns ======
+# 1 ns = 1000 ps ; dt = 0.001 ps => 1,000,000 pasos
+run             1000000
